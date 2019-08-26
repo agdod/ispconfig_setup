@@ -5,7 +5,7 @@
 config_phpMyAdmin_nginx() {
     touch /etc/nginx/conf.d/phpmyadmin.conf
     # Write default ngnix  vhost configuration file for phpmyadmin - to be included in all other hosts
-    cat /etc/nginx/conf.d/phpmyadmin.conf <<EOF
+    cat > /etc/nginx/conf.d/phpmyadmin.conf <<EOF
 
 ## phpMyAdmin default nginx configuration
 
@@ -21,7 +21,7 @@ server {
                        try_files $uri =404;
                        root /usr/share/;
                        fastcgi_pass unix:/var/run/php/php7.0-fpm.sock;
-                       fast_cgi_param HTTPS $https;
+                       fastcgi_param HTTPS $https;
                        fastcgi_index index.php;
                        fastcgi_param SCRIPT_FILENAME $request_filename;
                        include /etc/nginx/fastcgi_params;
@@ -44,27 +44,6 @@ server {
       index index.php;
    }
 
-## Images and static content is treated different
-   location ~* ^.+.(jpg|jpeg|gif|css|png|js|ico|xml)$ {
-      access_log off;
-      expires 30d;
-   }
-
-   location ~ /\.ht {
-      deny all;
-   }
-
-   location ~ /(libraries|setup/frames|setup/libs) {
-      deny all;
-      return 404;
-   }
-
-   location ~ \.php$ {
-      include /etc/nginx/fastcgi_params;
-      fastcgi_pass 127.0.0.1:9000;
-      fastcgi_index index.php;
-      fastcgi_param SCRIPT_FILENAME /usr/share/phpMyAdmin$fastcgi_script_name;
-   }
 }
 
 EOF
@@ -73,8 +52,8 @@ EOF
 # uncommmenting the phpmyadmin section
 # sed '/start/,/stop/ s/^#//' serach between the start stop patterns removing #. 
 # includes stop stop patterns so stop pattern needs recommenting out
-sed -i '/location\s\/phpmyadmin\s{/,/location\s\/squirrelmail\s{/ s/^#//' /etc/nginx/sites-available/ispconfig.vhost
-sed -i '/location\s\/squirrelmail\s{/ s/^/#/' /etc/nginx/sites-available/ispconfig.vhost
+   sed -i '/location\s\/phpmyadmin\s{/,/location\s\/squirrelmail\s{/ s/^#//' /etc/nginx/sites-available/ispconfig.vhost
+   sed -i '/location\s\/squirrelmail\s{/ s/^/#/' /etc/nginx/sites-available/ispconfig.vhost
 
 
     systemctl restart nginx
