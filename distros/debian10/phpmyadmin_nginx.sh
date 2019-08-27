@@ -44,15 +44,6 @@ config_phpMyAdmin_nginx() {
 
 EOF
 
-#write vhost nginx phpmyadmin file for ISPConfig vhost
-# uncommmenting the phpmyadmin section
-# sed '/start/,/stop/ s/^#//' serach between the start stop patterns removing #. 
-# includes stop stop patterns so stop pattern needs recommenting out
-   sed -i '/location\s\/phpmyadmin\s{/,/location\s\/squirrelmail\s{/ s/^#//' /etc/nginx/sites-available/ispconfig.vhost
-   sed -i '/location\s\/squirrelmail\s{/ s/^/#/' /etc/nginx/sites-available/ispconfig.vhost
-# change php5 tp php7 version
-   sed -i "s|php5-fpm|php7.3-fpm|" /etc/nginx/sites-available/apps.vhost 
-
     systemctl restart nginx
     systemctl restart php7.3-fpm
 }

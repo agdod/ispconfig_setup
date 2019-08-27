@@ -86,6 +86,19 @@ InstallISPConfig() {
   fi
   if [ $CFG_SETUP_WEB == "yes" ]; then
     if [ "$CFG_WEBSERVER" == "nginx" ]; then
+		 if [ "$CFG_PHPMYADMIN" == "yes" ]; then
+			#enable phpmyadmin in ispconfig vhost file
+			# uncommmenting the phpmyadmin section
+			# sed '/start/,/stop/ s/^#//' serach between the start stop patterns removing #. 
+			echo -n "Enabling phpMyAdmin configuration..."
+			sed -i '/location\s\/phpmyadmin\s{/,/location\s\/squirrelmail\s{/ s/^#//' /etc/nginx/sites-available/ispconfig.vhost
+			# includes stop stop patterns so stop pattern needs recommenting out
+			sed -i '/location\s\/squirrelmail\s{/ s/^/#/' /etc/nginx/sites-available/ispconfig.vhost
+			echo -e "[${green}DONE${NC}]\n"
+		fi
+		# change php5 tp php7.3 version in apps.vhost old version eaier to chaange here
+		# does this affect multi php version installed ??
+   		sed -i "s|php5-fpm|php7.3-fpm|" /etc/nginx/sites-available/apps.vhost 
         echo -n "Restarting nginx... "
         /etc/init.d/nginx restart
     elif [ "$CFG_WEBSERVER" == "apache" ]; then
