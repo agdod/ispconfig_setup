@@ -3,16 +3,14 @@
 #    Configure phpMyAdmin for nginx
 #---------------------------------------------------------------------
 config_phpMyAdmin_nginx() {
-    touch /etc/nginx/conf.d/phpmyadmin.conf
+    touch /etc/nginx/phpmyadmin.vhost
     # Write default ngnix  vhost configuration file for phpmyadmin - to be included in all other hosts
-    cat > /etc/nginx/conf.d/phpmyadmin.conf <<EOF
+    # to include phpmyadmin configuration in ISPConfig control panel- sites - website - options 
+    # under nginx Directives add :
+    # include phpmyadmin.vhost;
+    cat > /etc/nginx/sites-enabled/phpmyadmin.conf <<EOF
 
 ## phpMyAdmin default nginx configuration
-
-server {
-   listen 80;
-   server_name "";
-   root /usr/share/phpmyadmin;
 
    location /phpmyadmin {
                root /usr/share/;
@@ -20,7 +18,7 @@ server {
                location ~ ^/phpmyadmin/(.+\.php)$ {
                        try_files $uri =404;
                        root /usr/share/;
-                       fastcgi_pass unix:/var/run/php/php7.0-fpm.sock;
+                       fastcgi_pass unix:/var/run/php/php7.3-fpm.sock;
                        fastcgi_param HTTPS $https;
                        fastcgi_index index.php;
                        fastcgi_param SCRIPT_FILENAME $request_filename;
@@ -44,8 +42,6 @@ server {
       index index.php;
    }
 
-}
-
 EOF
 
 #write vhost nginx phpmyadmin file for ISPConfig vhost
@@ -54,7 +50,8 @@ EOF
 # includes stop stop patterns so stop pattern needs recommenting out
    sed -i '/location\s\/phpmyadmin\s{/,/location\s\/squirrelmail\s{/ s/^#//' /etc/nginx/sites-available/ispconfig.vhost
    sed -i '/location\s\/squirrelmail\s{/ s/^/#/' /etc/nginx/sites-available/ispconfig.vhost
-
+# change php5 tp php7 version
+   sed -i "s|php5-fpm|php7.3-fpm|" /etc/nginx/sites-available/apps.vhost 
 
     systemctl restart nginx
     systemctl restart php7.3-fpm
