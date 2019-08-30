@@ -8,7 +8,7 @@ config_phpMyAdmin_nginx() {
     # to include phpmyadmin configuration in ISPConfig control panel- sites - website - options 
     # under nginx Directives add :
     # include phpmyadmin.vhost;
-    cat > /etc/nginx/sites-enabled/phpmyadmin.conf <<EOF
+    cat > /etc/nginx/phpmyadmin.vhost <<EOF
 
 ## phpMyAdmin default nginx configuration
 
